@@ -1,4 +1,4 @@
 jdbc.driver.class=org.postgresql.Driver
 jdbc.driver.user=postgres
 jdbc.driver.password=12345
-jdbc.driver.url=jdbc:postgresql://localhost:5432/Manejo_Competencia
+jdbc.driver.url=jdbc:postgresql://localhost:5432/ManejoCompetencia

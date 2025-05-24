@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class DatabaseConnection {
+public class DatabaseConnection implements AutoCloseable{
 
 	
 	private static java.sql.Connection connection;
@@ -24,6 +24,12 @@ public class DatabaseConnection {
 
 	 public java.sql.Connection getConnection() {
 		return connection;
+	}
+
+	@Override
+	public void close() throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 	 
 	 

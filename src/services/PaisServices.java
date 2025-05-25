@@ -67,4 +67,46 @@ package services;
 	            }
 	        }
 	    }
+	    
+	    public void modificarPais(String nombreOriginal, Pais paisActualizado) throws SQLException {
+	        // Validaciones de longitud
+	        if (nombreOriginal == null || nombreOriginal.isEmpty()) {
+	            throw new IllegalArgumentException("El nombre original del país es requerido");
+	        }
+	        if (paisActualizado.getNomPais() == null || paisActualizado.getNomPais().isEmpty()) {
+	            throw new IllegalArgumentException("El nuevo nombre del país es requerido");
+	        }
+	        if (paisActualizado.getNomPais().length() > 30) {
+	            throw new IllegalArgumentException("El nombre del país no puede exceder 30 caracteres");
+	        }
+
+	        String sql = "{ call modificar_pais(?, ?) }";
+	        
+	        try (DatabaseConnection dbConn = new DatabaseConnection();
+	             CallableStatement stmt = dbConn.getConnection().prepareCall(sql)) {
+	            
+	            stmt.setString(1, nombreOriginal);
+	            stmt.setString(2, paisActualizado.getNomPais());
+	            
+	            stmt.execute();
+	            
+	            System.out.println("✅ País modificado: " + nombreOriginal + " → " + paisActualizado.getNomPais());
+	            
+	        } catch (SQLException e) {
+	            String errorMsg = "Error modificando país";
+	            if (e.getSQLState() != null) {
+	                switch (e.getSQLState()) {
+	                    case "23505":
+	                        errorMsg = "Ya existe un país con el nombre: " + paisActualizado.getNomPais();
+	                        break;
+	                    case "23503":
+	                        errorMsg = "No se puede modificar. Hay atletas asociados a este país.";
+	                        break;
+	                }
+	            } else if (e.getMessage().contains("demasiado largo")) {
+	                errorMsg = "El nombre del país excede el límite de caracteres";
+	            }
+	            throw new SQLException(errorMsg, e);
+	        }
+	    }
 	}

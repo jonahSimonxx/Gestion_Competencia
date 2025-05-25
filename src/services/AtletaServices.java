@@ -3,6 +3,7 @@ package services;
 import model.Atleta;
 import utils.DatabaseConnection;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class AtletaServices {
     
@@ -131,4 +132,74 @@ public class AtletaServices {
             return stmt.executeQuery().next();
         }
     }
+    
+    
+    public void modificarAtleta(String idOriginal, Atleta atletaActualizado) throws SQLException {
+        // Validar longitud de campos antes de enviar a BD
+        if (atletaActualizado.getIdAtleta() != null && atletaActualizado.getIdAtleta().length() > 20) {
+            throw new IllegalArgumentException("El ID del atleta no puede exceder 20 caracteres");
+        }
+        if (atletaActualizado.getNomCompleto() != null && atletaActualizado.getNomCompleto().length() > 50) {
+            throw new IllegalArgumentException("El nombre no puede exceder 50 caracteres");
+        }
+        if (atletaActualizado.getCatDep() != null && atletaActualizado.getCatDep().length() > 30) {
+            throw new IllegalArgumentException("La categoría deportiva no puede exceder 30 caracteres");
+        }
+        if (atletaActualizado.getIdEntrenador() != null && atletaActualizado.getIdEntrenador().length() > 20) {
+            throw new IllegalArgumentException("El ID del entrenador no puede exceder 20 caracteres");
+        }
+        if (atletaActualizado.getNomPais() != null && atletaActualizado.getNomPais().length() > 30) {
+            throw new IllegalArgumentException("El nombre del país no puede exceder 30 caracteres");
+        }
+
+        String sql = "{ call modificar_atleta(?, ?, ?, ?, ?, ?, ?, ?) }";
+        
+        try (DatabaseConnection dbConn = new DatabaseConnection();
+             CallableStatement stmt = dbConn.getConnection().prepareCall(sql)) {
+            
+            stmt.setString(1, idOriginal);                      // ID original (WHERE)
+            stmt.setString(2, atletaActualizado.getNomCompleto()); 
+            stmt.setString(3, String.valueOf(atletaActualizado.getSexo())); 
+            stmt.setString(4, atletaActualizado.getCatDep());    
+            stmt.setString(5, atletaActualizado.getIdEntrenador()); 
+            stmt.setInt(6, atletaActualizado.getEdad());         
+            stmt.setString(7, atletaActualizado.getNomPais());    
+            stmt.setString(8, atletaActualizado.getIdAtleta());   
+            
+            stmt.execute();
+            
+        } catch (SQLException e) {
+            String errorMsg = "Error modificando atleta";
+            if (e.getMessage().contains("demasiado largo")) {
+                errorMsg = "Uno de los valores excede el tamaño permitido en la base de datos";
+            }
+            throw new SQLException(errorMsg + ": " + e.getMessage(), e);
+        }
+    }
+    
+    public ArrayList<Atleta> obtenerTodosAtletas() throws SQLException {
+        ArrayList<Atleta> atletas = new ArrayList<>();
+        String sql = "SELECT * FROM \"Atleta\" ORDER BY \"nom_completo\""; 
+        
+        try (DatabaseConnection dbConn = new DatabaseConnection();
+             Statement stmt = dbConn.getConnection().createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                Atleta atleta = new Atleta(
+                    rs.getString("id_atleta"),
+                    rs.getString("nom_completo"),
+                    rs.getString("sexo").charAt(0),
+                    rs.getString("cat_dep"),
+                    rs.getString("id_entrenador"),
+                    rs.getInt("edad"),
+                    rs.getString("nom_pais")
+                );
+                atletas.add(atleta);
+            }
+        }
+        return atletas;
+    }
+
+    
 }

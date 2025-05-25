@@ -86,4 +86,61 @@ public class EntrenadorServices {
             }
         }
     }
+    
+    public void modificarEntrenador(String idOriginal, Entrenador entrenadorActualizado) throws SQLException {
+        // Validaciones de longitud
+        if (idOriginal == null || idOriginal.isEmpty()) {
+            throw new IllegalArgumentException("El ID original del entrenador es requerido");
+        }
+        if (idOriginal.length() > 20) {
+            throw new IllegalArgumentException("El ID original no puede exceder 20 caracteres");
+        }
+        if (entrenadorActualizado.getIdEntrenador() != null && entrenadorActualizado.getIdEntrenador().length() > 20) {
+            throw new IllegalArgumentException("El nuevo ID no puede exceder 20 caracteres");
+        }
+        if (entrenadorActualizado.getNombre() != null && entrenadorActualizado.getNombre().length() > 50) {
+            throw new IllegalArgumentException("El nombre no puede exceder 50 caracteres");
+        }
+        if (entrenadorActualizado.getDireccion() != null && entrenadorActualizado.getDireccion().length() > 100) {
+            throw new IllegalArgumentException("La dirección no puede exceder 100 caracteres");
+        }
+        if (entrenadorActualizado.getEsp() != null && entrenadorActualizado.getEsp().length() > 30) {
+            throw new IllegalArgumentException("La especialidad no puede exceder 30 caracteres");
+        }
+
+        String sql = "{ call modificar_entrenador(?, ?, ?, ?, ?) }";
+        
+        try (DatabaseConnection dbConn = new DatabaseConnection();
+             CallableStatement stmt = dbConn.getConnection().prepareCall(sql)) {
+            
+            stmt.setString(1, idOriginal);
+            stmt.setString(2, entrenadorActualizado.getNombre());
+            stmt.setString(3, entrenadorActualizado.getDireccion());
+            stmt.setString(4, entrenadorActualizado.getEsp());
+            stmt.setString(5, entrenadorActualizado.getIdEntrenador());
+            
+            stmt.execute();
+            
+            System.out.println("✅ Entrenador modificado: " + idOriginal + " → " + entrenadorActualizado.getIdEntrenador());
+            
+        } catch (SQLException e) {
+            String errorMsg = "Error modificando entrenador";
+            if (e.getSQLState() != null) {
+                switch (e.getSQLState()) {
+                    case "23505":
+                        errorMsg = "Ya existe un entrenador con el ID: " + entrenadorActualizado.getIdEntrenador();
+                        break;
+                    case "23503":
+                        errorMsg = "Violación de integridad referencial";
+                        break;
+                    case "23514":
+                        errorMsg = "Violación de reglas de validación";
+                        break;
+                }
+            } else if (e.getMessage().contains("demasiado largo")) {
+                errorMsg = "Uno de los valores excede el límite de caracteres";
+            }
+            throw new SQLException(errorMsg + ": " + e.getMessage(), e);
+        }
+    }
 }

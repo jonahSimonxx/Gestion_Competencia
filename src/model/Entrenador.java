@@ -5,14 +5,14 @@ public class Entrenador {
 	private String idEntrenador;
 	private String nombre;
 	private String direccion;
-	private String esp;
+	private String espec;
 	
 	
-	public Entrenador(String idEntrenador, String nombre, String direccion, String esp) {
+	public Entrenador(String idEntrenador, String nombre, String direccion, String espec) {
 		this.idEntrenador = idEntrenador;
 		this.nombre = nombre;
 		this.direccion = direccion;
-		this.esp = esp;
+		this.espec = espec;
 	}
 	public String getIdEntrenador() {
 		return idEntrenador;
@@ -33,10 +33,10 @@ public class Entrenador {
 		this.direccion = direccion;
 	}
 	public String getEsp() {
-		return esp;
+		return espec;
 	}
-	public void setEsp(String esp) {
-		this.esp = esp;
+	public void setEsp(String espec) {
+		this.espec = espec;
 	}
 	
 	

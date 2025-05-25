@@ -1,36 +1,28 @@
 package utils;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
-public class DatabaseConnection implements AutoCloseable{
+public class DatabaseConnection implements AutoCloseable {
+    private static final String URL = "jdbc:postgresql://localhost:5432/ManejoCompetencia";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "12345";
+    
+    private Connection connection;
 
-	
-	private static java.sql.Connection connection;
+    public DatabaseConnection() throws SQLException {
+        this.connection = DriverManager.getConnection(URL, USER, PASSWORD);
+    }
 
-	public DatabaseConnection() throws ClassNotFoundException, SQLException, IOException {
+    public Connection getConnection() {
+        return connection;
+    }
 
-			Properties prop =new Properties();	
-		    prop.load(Connection.class.getResourceAsStream("configuration.txt"));
-		    Class.forName(prop.getProperty("jdbc.driver.class"));
-		    String user = prop.getProperty("jdbc.driver.user");
-		    String pass = prop.getProperty("jdbc.driver.password");
-			String url = prop.getProperty("jdbc.driver.url");
-			connection = DriverManager.getConnection(url, user, pass);
-	}
-
-	 public java.sql.Connection getConnection() {
-		return connection;
-	}
-
-	@Override
-	public void close() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-	 
-	 
+    @Override
+    public void close() throws SQLException {
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
+        }
+    }
 }

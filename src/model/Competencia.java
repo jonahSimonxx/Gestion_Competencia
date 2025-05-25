@@ -7,13 +7,23 @@ public class Competencia {
 	private String estado;
 	private String fechaIni;
 	private String fechaFin;
+	private String idDisciplina;
 	
-	public Competencia(String nomCompetencia, String idSede, String estado, String fechaIni, String fechaFin) {
+	public Competencia(String nomCompetencia, String idSede, String estado, String fechaIni, String fechaFin, String idDisciplina) {
 		this.nomCompetencia = nomCompetencia;
 		this.idSede = idSede;
 		this.estado = estado;
 		this.fechaIni = fechaIni;
 		this.fechaFin = fechaFin;
+		this.idDisciplina = idDisciplina;
+	}
+
+	public String getIdDisciplina() {
+		return idDisciplina;
+	}
+
+	public void setIdDisciplina(String idDisciplina) {
+		this.idDisciplina = idDisciplina;
 	}
 
 	public String getNomCompetencia() {

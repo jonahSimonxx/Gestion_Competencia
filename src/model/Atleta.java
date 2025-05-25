@@ -4,21 +4,22 @@ public class Atleta {
      
 	private String idAtleta;
 	private String nomCompleto;
-	private String sexo;
+	private char sexo;
 	private String catDep;
 	private String idEntrenador;
-	private String nomPais;
 	private int edad;
+	private String nomPais;
 	
-	public Atleta(String idAtleta, String nomCompleto, String sexo, String catDep, String idEntrenador, String nomPais,
-			int edad) {
+	
+	public Atleta(String idAtleta, String nomCompleto, char sexo, String catDep, String idEntrenador, int edad,String nomPais) {
 		this.idAtleta = idAtleta;
 		this.nomCompleto = nomCompleto;
 		this.sexo = sexo;
 		this.catDep = catDep;
 		this.idEntrenador = idEntrenador;
-		this.nomPais = nomPais;
 		this.edad = edad;
+		this.nomPais = nomPais;
+		
 	}
 
 	public String getIdAtleta() {
@@ -37,11 +38,11 @@ public class Atleta {
 		this.nomCompleto = nomCompleto;
 	}
 
-	public String getSexo() {
+	public char getSexo() {
 		return sexo;
 	}
 
-	public void setSexo(String sexo) {
+	public void setSexo(char sexo) {
 		this.sexo = sexo;
 	}
 

@@ -6,7 +6,7 @@ import java.sql.*;
 
 public class EntrenadorServices {
     
-    public void insertar(Entrenador entrenador) throws IllegalArgumentException, SQLException {
+    public void insertarEntrenador(Entrenador entrenador) throws IllegalArgumentException, SQLException {
         // Validaciones en Java
         validarEntrenador(entrenador);
         

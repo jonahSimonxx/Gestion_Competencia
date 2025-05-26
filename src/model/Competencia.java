@@ -3,27 +3,27 @@ package model;
 public class Competencia {
 
 	private String nomCompetencia;
-	private String idSede;
+	private String nomSede;
 	private String estado;
 	private String fechaIni;
 	private String fechaFin;
-	private String idDisciplina;
+	private String nomDisciplina;
 	
-	public Competencia(String nomCompetencia, String idSede, String estado, String fechaIni, String fechaFin, String idDisciplina) {
+	public Competencia(String nomCompetencia, String nomSede, String estado, String fechaIni, String fechaFin, String nomDisciplina) {
 		this.nomCompetencia = nomCompetencia;
-		this.idSede = idSede;
+		this.nomSede = nomSede;
 		this.estado = estado;
 		this.fechaIni = fechaIni;
 		this.fechaFin = fechaFin;
-		this.idDisciplina = idDisciplina;
+		this.nomDisciplina = nomDisciplina;
 	}
 
-	public String getIdDisciplina() {
-		return idDisciplina;
+	public String getNomDisciplina() {
+		return nomDisciplina;
 	}
 
-	public void setIdDisciplina(String idDisciplina) {
-		this.idDisciplina = idDisciplina;
+	public void setNomDisciplina(String nomDisciplina) {
+		this.nomDisciplina = nomDisciplina;
 	}
 
 	public String getNomCompetencia() {
@@ -34,12 +34,12 @@ public class Competencia {
 		this.nomCompetencia = nomCompetencia;
 	}
 
-	public String getIdSede() {
-		return idSede;
+	public String getNomSede() {
+		return nomSede;
 	}
 
-	public void setIdSede(String idSede) {
-		this.idSede = idSede;
+	public void setNomSede(String nomSede) {
+		this.nomSede = nomSede;
 	}
 
 	public String getEstado() {

@@ -2,25 +2,13 @@ package model;
 
 public class Sede {
 	
-	private String idSede;
 	private String nomSede;
-	private String idCiudad;
+	private String nomCiudad;
 	
 	
-	public Sede(String idSede, String nomSede, String idCiudad) {
-		this.idSede = idSede;
+	public Sede(String nomSede, String nomCiudad) {
 		this.nomSede = nomSede;
-		this.idCiudad = idCiudad;
-	}
-
-
-	public String getIdSede() {
-		return idSede;
-	}
-
-
-	public void setIdSede(String idSede) {
-		this.idSede = idSede;
+		this.nomCiudad = nomCiudad;
 	}
 
 
@@ -34,13 +22,13 @@ public class Sede {
 	}
 
 
-	public String getIdCiudad() {
-		return idCiudad;
+	public String getNomCiudad() {
+		return nomCiudad;
 	}
 
 
-	public void setId_ciudad(String idCiudad) {
-		this.idCiudad = idCiudad;
+	public void setNomCiudad(String nomCiudad) {
+		this.nomCiudad = nomCiudad;
 	}
 	
 	

@@ -2,26 +2,26 @@ package model;
 
 public class Ciudad {
 
-	private String idCiudad;
-	private String nomCiudad;
 	private String nomPais;
+	private String nomCiudad;
 	
 	
-	public Ciudad(String idCiudad, String nomCiudad, String nomPais) {
-		this.idCiudad = idCiudad;
+	
+	public Ciudad(String nomPais, String nomCiudad) {
+		this.nomPais = nomPais;
 		this.nomCiudad = nomCiudad;
+		
+	}
+	
+	public String getNomPais() {
+		return nomPais;
+	}
+
+
+	public void setNomPais(String nomPais) {
 		this.nomPais = nomPais;
 	}
-
-
-	public String getIdCiudad() {
-		return idCiudad;
-	}
-
-
-	public void setIdCiudad(String idCiudad) {
-		this.idCiudad = idCiudad;
-	}
+	
 
 
 	public String getNomCiudad() {
@@ -34,14 +34,6 @@ public class Ciudad {
 	}
 
 
-	public String getIdPais() {
-		return nomPais;
-	}
-
-
-	public void setIdPais(String nomPais) {
-		this.nomPais = nomPais;
-	}
 	
 	
 	

@@ -19,9 +19,11 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 public class Principal extends JFrame {
@@ -33,11 +35,14 @@ public class Principal extends JFrame {
 	ButtonGroup sexo = new ButtonGroup();
 	private JPanel contentPane;
 	private JPanel atras1;
+	protected JPanel atras2;
 	private JTable table_atletas;
 	private JTextField textField_nombreAtleta;
 	private JTextField textField_paisAtleta;
 	private JTextField textField_catDeportAtleta;
 	private JTextField textField_idEntrenador_Atleta;
+	boolean modificando = false;
+	Atleta viejoAtleta;
 	Atleta nuevoAtleta;
 	private AtletaServices servicioAtleta = new AtletaServices();
 	private TableModelAtletas atletasTableModel;
@@ -130,6 +135,9 @@ public class Principal extends JFrame {
 				boolean error = false;
 				nuevoAtleta = new Atleta(textField_idAtleta.getText(),textField_nombreAtleta.getText(),sexo , textField_catDeportAtleta.getText(),textField_idEntrenador_Atleta.getText(),(Integer)spinner_edadAtleta.getValue(), textField_paisAtleta.getText());
 				try {
+				    if(modificando) {
+				    	servicioAtleta.modificarAtleta(nuevoAtleta.getIdAtleta(), nuevoAtleta);
+				    }else
 					servicioAtleta.insertarAtleta(nuevoAtleta);
 				} catch (IllegalArgumentException e1) {
 					error = true;
@@ -141,7 +149,18 @@ public class Principal extends JFrame {
 					e1.printStackTrace();
 				}
 				if(!error) {
-			    JOptionPane.showMessageDialog(panel_añadir_atleta, "Se ha insertado un nuevo atleta");
+					if(modificando) {
+						try {
+							atletasTableModel = new TableModelAtletas(servicioAtleta.obtenerTodosAtletas());
+							table_atletas.setModel(atletasTableModel);
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} 
+					}
+					String accion = modificando? "modificado":"insertado" ;
+			    JOptionPane.showMessageDialog(panel_añadir_atleta, "Se ha " + accion + " un atleta");
+			    btnAñadir.setText("Añadir");
 			    textField_idAtleta.setText(null);
 			    textField_catDeportAtleta.setText(null);
 			    textField_idEntrenador_Atleta.setText(null);
@@ -150,9 +169,14 @@ public class Principal extends JFrame {
 			    spinner_edadAtleta.setValue(18);
 			    rdbtn_masculinoAtleta.setSelected(true);
 				contentPane.removeAll();
+				if(modificando) {
+					contentPane.add(atras2);
+					 modificando = false;
+				}else
 				contentPane.add(atras1);
 				contentPane.repaint();
 				contentPane.revalidate();
+				if(modificando)
 				atras1 = null;
 				nuevoAtleta = null;}else
 				JOptionPane.showMessageDialog(panel_añadir_atleta, "No se ha insertado el atleta, revise sus entradas");
@@ -231,6 +255,41 @@ public class Principal extends JFrame {
 		});
 		
 		JButton btn_modificar_atleta = new JButton("Modificar");
+		btn_modificar_atleta.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(table_atletas.getSelectedRow() != -1) {
+			   try {
+				ArrayList<Atleta> atletas = servicioAtleta.obtenerTodosAtletas();
+				for(Atleta a : atletas) {
+					   if(a.getIdAtleta().equals(table_atletas.getValueAt( table_atletas.getSelectedRow(),0))) {
+						   viejoAtleta = a;
+					   }
+				    }
+				btnAñadir.setText("Modificar");
+				modificando = true;
+				textField_idAtleta.setText(viejoAtleta.getIdAtleta());
+				textField_catDeportAtleta.setText(viejoAtleta.getCatDep());
+				textField_idEntrenador_Atleta.setText(viejoAtleta.getIdEntrenador());
+				textField_nombreAtleta.setText(viejoAtleta.getNomCompleto());
+				textField_paisAtleta.setText(viejoAtleta.getNomPais());
+				spinner_edadAtleta.setValue(viejoAtleta.getEdad());
+				atras2 = panel_mostrar_atletas;
+				contentPane.removeAll();
+				contentPane.add(panel_añadir_atleta);
+				contentPane.repaint();
+				contentPane.revalidate();
+				if(Character.toString(viejoAtleta.getSexo()).equals("M")) {
+					rdbtn_masculinoAtleta.setSelected(true);
+				}else
+					rdbtn_femeninoAtleta.setSelected(true);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			}
+				else
+					JOptionPane.showMessageDialog(panel_mostrar_atletas, "Seleccione un atleta para modificar");}
+		});
 		toolBar.add(btn_modificar_atleta);
 			
 			final JPanel panelPrincipal = new JPanel();

@@ -2,15 +2,15 @@ package model;
 
 public class Registro {
 	
-	private String idDisciplina;
+	private String nomDisciplina;
 	private String marcas;
 	private String idAtleta;
 	private String nomCompetencia;
 	private int puesto;
 	
 	
-	public Registro(String idDisciplina, String marcas, String idAtleta, String nomCompetencia, int puesto) {
-		this.idDisciplina = idDisciplina;
+	public Registro(String nomDisciplina, String marcas, String idAtleta, String nomCompetencia, int puesto) {
+		this.nomDisciplina = nomDisciplina;
 		this.marcas = marcas;
 		this.idAtleta = idAtleta;
 		this.nomCompetencia = nomCompetencia;
@@ -18,13 +18,13 @@ public class Registro {
 	}
 
 
-	public String getIdDisciplina() {
-		return idDisciplina;
+	public String getNomDisciplina() {
+		return nomDisciplina;
 	}
 
 
-	public void setIdDisciplina(String idDisciplina) {
-		this.idDisciplina = idDisciplina;
+	public void setNomDisciplina(String nomDisciplina) {
+		this.nomDisciplina = nomDisciplina;
 	}
 
 

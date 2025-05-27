@@ -13,6 +13,8 @@ public class DatabaseInitializer {
         SedeServices sedeService = new SedeServices();
         DisciplinaServices disciplinaService = new DisciplinaServices();
         CompetenciaServices competenciaService = new CompetenciaServices();
+        RegistroServices registroService = new RegistroServices();
+        InscripcionServices inscripcionService = new InscripcionServices();
 
 
         try {
@@ -128,6 +130,46 @@ public class DatabaseInitializer {
                 competenciaService.insertarCompetencia(competencia2);
                 competenciaService.insertarCompetencia(competencia3);
                 competenciaService.insertarCompetencia(competencia4);
+                
+                
+                Registro registro1 = new Registro(
+                        "Atletismo",          
+                        "9.87s",             
+                        "ATL-001",             
+                        "JJOO 2024",           
+                        1                      
+                    );
+                    
+                    Registro registro2 = new Registro(
+                        "Natación",           
+                        "52.43s",             
+                        "ATL-002",            
+                        "Mundial Natación",   
+                        2                     
+                    );
+                    
+                    registroService.insertarRegistro(registro1);
+                    registroService.insertarRegistro(registro2);
+                    
+                    
+                    Inscripcion inscripcion1 = new Inscripcion(
+                            "JJOO 2024",         // Competencia
+                            "ATL-001",           // ID Atleta
+                            "01/06/24",          // Fecha inicio inscripción
+                            "25/07/24",          // Fecha fin inscripción
+                            "ENT-001"            // ID Entrenador
+                        );
+                        
+                        Inscripcion inscripcion2 = new Inscripcion(
+                            "Mundial Natación", // Competencia
+                            "ATL-002",          // ID Atleta
+                            "01/05/23",         // Fecha inicio inscripción
+                            "13/07/23",         // Fecha fin inscripción
+                            "ENT-002"           // ID Entrenador
+                        );
+                        
+                        inscripcionService.insertarInscripcion(inscripcion1);
+                        inscripcionService.insertarInscripcion(inscripcion2);
 
 
             System.out.println("✅ Datos iniciales cargados correctamente");

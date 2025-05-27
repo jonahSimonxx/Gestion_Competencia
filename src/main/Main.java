@@ -5,6 +5,8 @@ import visuals.Principal;
 import java.awt.EventQueue;
 import java.sql.SQLException;
 
+import model.Inscripcion;
+import services.InscripcionServices;
 import utils.DatabaseCleaner;
 import utils.DatabaseInitializer;
 

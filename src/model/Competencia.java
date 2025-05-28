@@ -1,20 +1,24 @@
 package model;
 
+import java.sql.Date;
+
+import utils.DateUtils;
+
 public class Competencia {
 
 	private String nomCompetencia;
 	private String nomSede;
 	private String estado;
-	private String fechaIni;
-	private String fechaFin;
+	private Date fechaIni;
+    private Date fechaFin;
 	private String nomDisciplina;
 	
 	public Competencia(String nomCompetencia, String nomSede, String estado, String fechaIni, String fechaFin, String nomDisciplina) {
 		this.nomCompetencia = nomCompetencia;
 		this.nomSede = nomSede;
 		this.estado = estado;
-		this.fechaIni = fechaIni;
-		this.fechaFin = fechaFin;
+		this.setFechaIni(fechaIni);
+        this.setFechaFin(fechaFin);
 		this.nomDisciplina = nomDisciplina;
 	}
 
@@ -51,20 +55,23 @@ public class Competencia {
 	}
 
 	public String getFechaIni() {
-		return fechaIni;
-	}
+        return DateUtils.toDatabaseString(this.fechaIni);
+    }
 
-	public void setFechaIni(String fechaIni) {
-		this.fechaIni = fechaIni;
-	}
+    public String getFechaFin() {
+        return DateUtils.toDatabaseString(this.fechaFin);
+    }
 
-	public String getFechaFin() {
-		return fechaFin;
-	}
+    public void setFechaIni(String fechaIni) {
+        java.util.Date utilDate = DateUtils.fromDatabaseString(fechaIni);
+        this.fechaIni = utilDate != null ? new Date(utilDate.getTime()) : null;
+    }
 
-	public void setFechaFin(String fechaFin) {
-		this.fechaFin = fechaFin;
-	}
+    public void setFechaFin(String fechaFin) {
+        java.util.Date utilDate = DateUtils.fromDatabaseString(fechaFin);
+        this.fechaFin = utilDate != null ? new Date(utilDate.getTime()) : null;
+    }
+
 	
 	
 	

@@ -20,7 +20,7 @@ public class CompetenciaServices {
         verificarReferencias(competencia);
 
         // Llamada a la función PostgreSQL
-        String sql = "{ call crear_competicion(?, ?, ?, ?, ?, ?) }";
+        String sql = "{ call crear_competencia(?, ?, ?, ?, ?, ?) }";
         
         try (DatabaseConnection dbConn = new DatabaseConnection();
              CallableStatement stmt = dbConn.getConnection().prepareCall(sql)) {

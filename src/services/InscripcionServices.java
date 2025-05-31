@@ -110,9 +110,6 @@ public class InscripcionServices {
             throw new IllegalArgumentException("La fecha de fin es requerida");
         }
         
-        if (inscripcion.getIdEntrenador() == null || inscripcion.getIdEntrenador().isEmpty()) {
-            throw new IllegalArgumentException("El ID del entrenador es requerido");
-        }
         
         // Validar longitudes máximas según la tabla
         if (inscripcion.getNomCompetencia().length() > 20) {
@@ -131,7 +128,7 @@ public class InscripcionServices {
             throw new IllegalArgumentException("La fecha de fin no puede exceder 10 caracteres");
         }
         
-        if (inscripcion.getIdEntrenador().length() > 11) {
+        if (inscripcion.getIdEntrenador() != null && inscripcion.getIdEntrenador().length() > 11) {
             throw new IllegalArgumentException("El ID del entrenador no puede exceder 11 caracteres");
         }
     }
@@ -150,9 +147,11 @@ public class InscripcionServices {
                 throw new SQLException("La competencia '" + inscripcion.getNomCompetencia() + "' no existe");
             }
             
-            // Verificar entrenador
-            if (!existeEnTabla(conn, "\"Entrenador\"", "\"id_entrenador\"", inscripcion.getIdEntrenador())) {
-                throw new SQLException("El entrenador con ID '" + inscripcion.getIdEntrenador() + "' no existe");
+            // Verificar entrenador solo si existe idEntrenador
+            if (inscripcion.getIdEntrenador() != null && !inscripcion.getIdEntrenador().isEmpty()) {
+                if (!existeEnTabla(conn, "\"Entrenador\"", "\"id_entrenador\"", inscripcion.getIdEntrenador())) {
+                    throw new SQLException("El entrenador con ID '" + inscripcion.getIdEntrenador() + "' no existe");
+                }
             }
         }
     }

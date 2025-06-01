@@ -3,6 +3,7 @@ package services;
 import model.Ciudad;
 import utils.DatabaseConnection;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class CiudadServices {
     
@@ -139,4 +140,21 @@ public class CiudadServices {
             return stmt.executeQuery().next();
         }
     }
+
+	public ArrayList<Ciudad> obtenerCiudades() throws SQLException {
+		ArrayList<Ciudad> ciudades = new ArrayList<Ciudad>();
+		String sql = "SELECT * FROM \"Ciudad\"";
+		try(DatabaseConnection dbConn = new DatabaseConnection();
+		    Statement stmt = dbConn.getConnection().createStatement()){
+			ResultSet rs = stmt.executeQuery(sql);
+			while(rs.next()){
+				Ciudad nueva = new Ciudad(rs.getString(2),rs.getString(1));
+				ciudades.add(nueva);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ciudades;
+	}
 }

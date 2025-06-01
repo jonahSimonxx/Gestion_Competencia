@@ -3,6 +3,7 @@ package services;
 	import model.Pais;
 	import utils.DatabaseConnection;
 	import java.sql.*;
+import java.util.ArrayList;
 
 	public class PaisServices {
 	    
@@ -109,4 +110,21 @@ package services;
 	            throw new SQLException(errorMsg, e);
 	        }
 	    }
+	    
+	    public ArrayList<Pais> obtenerPaises() throws SQLException {
+			ArrayList<Pais> paises = new ArrayList<Pais>();
+			String sql = "SELECT * FROM \"Pais\"";
+			try(DatabaseConnection dbConn = new DatabaseConnection();
+			    Statement stmt = dbConn.getConnection().createStatement()){
+				ResultSet rs = stmt.executeQuery(sql);
+				while(rs.next()){
+					Pais nuevo = new Pais(rs.getString(1));
+					paises.add(nuevo);
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return paises;
+		} 
 	}

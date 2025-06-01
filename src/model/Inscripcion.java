@@ -2,8 +2,6 @@ package model;
 
 import java.sql.Date;
 
-import utils.DateUtils;
-
 public class Inscripcion {
 	
 	private String nomCompetencia;
@@ -43,35 +41,34 @@ public class Inscripcion {
 	}
 
 
-	  public String getFechaIni() {
-	        return DateUtils.toDatabaseString(this.fechaIni);
-	    }
+	public Date getFechaIni() {
+        return this.fechaIni;
+    }
 
 
-	  public void setFechaIni(String fechaIni) {
-	        java.util.Date utilDate = DateUtils.fromDatabaseString(fechaIni);
-	        this.fechaIni = utilDate != null ? new Date(utilDate.getTime()) : null;
-	    }
+  public void setFechaIni(String fechaIni) {
+	  this.fechaIni= java.sql.Date.valueOf(fechaIni);
+
+    }
 
 
-	  public String getFechaFin() {
-	        return DateUtils.toDatabaseString(this.fechaFin);
-	    }
+  public Date getFechaFin() {
+        return this.fechaFin;
+    }
 
 
-	  public void setFechaFin(String fechaFin) {
-	        java.util.Date utilDate = DateUtils.fromDatabaseString(fechaFin);
-	        this.fechaFin = utilDate != null ? new Date(utilDate.getTime()) : null;
-	    }
-	
-	public String getIdEntrenador() {
-		return idEntrenador;
-	}
+  public void setFechaFin(String fechaFin) {
+	  this.fechaFin = java.sql.Date.valueOf(fechaFin);
+    }
+
+public String getIdEntrenador() {
+	return idEntrenador;
+}
 
 
-	public void setIdEntrenador(String idEntrenador) {
-		this.idEntrenador = idEntrenador;
-	}
+public void setIdEntrenador(String idEntrenador) {
+	this.idEntrenador = idEntrenador;
+}
 
 	
 	

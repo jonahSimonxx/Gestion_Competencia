@@ -2,8 +2,6 @@ package model;
 
 import java.sql.Date;
 
-import utils.DateUtils;
-
 public class Competencia {
 
 	private String nomCompetencia;
@@ -11,24 +9,17 @@ public class Competencia {
 	private String estado;
 	private Date fechaIni;
     private Date fechaFin;
-	private String nomDisciplina;
 	
-	public Competencia(String nomCompetencia, String nomSede, String estado, String fechaIni, String fechaFin, String nomDisciplina) {
+	public Competencia(String nomCompetencia, String nomSede, String estado, String fechaIni, String fechaFin) {
 		this.nomCompetencia = nomCompetencia;
 		this.nomSede = nomSede;
 		this.estado = estado;
 		this.setFechaIni(fechaIni);
         this.setFechaFin(fechaFin);
-		this.nomDisciplina = nomDisciplina;
+	
 	}
 
-	public String getNomDisciplina() {
-		return nomDisciplina;
-	}
-
-	public void setNomDisciplina(String nomDisciplina) {
-		this.nomDisciplina = nomDisciplina;
-	}
+	
 
 	public String getNomCompetencia() {
 		return nomCompetencia;
@@ -54,30 +45,20 @@ public class Competencia {
 		this.estado = estado;
 	}
 
-	public String getFechaIni() {
-        return DateUtils.toDatabaseString(this.fechaIni);
+	public Date getFechaIni() {
+        return this.fechaIni;
     }
 
-    public String getFechaFin() {
-        return DateUtils.toDatabaseString(this.fechaFin);
+    public Date getFechaFin() {
+        return this.fechaFin;
     }
 
     public void setFechaIni(String fechaIni) {
-        java.util.Date utilDate = DateUtils.fromDatabaseString(fechaIni);
-        this.fechaIni = utilDate != null ? new Date(utilDate.getTime()) : null;
+        this.fechaIni =  java.sql.Date.valueOf(fechaIni);
+
     }
 
     public void setFechaFin(String fechaFin) {
-        java.util.Date utilDate = DateUtils.fromDatabaseString(fechaFin);
-        this.fechaFin = utilDate != null ? new Date(utilDate.getTime()) : null;
+        this.fechaFin =  java.sql.Date.valueOf(fechaFin);
     }
-
-	
-	
-	
-	
-	
-	
-
-	
 }

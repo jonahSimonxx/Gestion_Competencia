@@ -3,6 +3,7 @@ package services;
 import model.Sede;
 import utils.DatabaseConnection;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class SedeServices {
     
@@ -158,5 +159,23 @@ public class SedeServices {
             }
             return null;
         }
+        
+        
     }
+    
+    public ArrayList<Sede> obtenerTodasSedes() throws SQLException {
+		 ArrayList<Sede> sedes = new ArrayList<Sede>();
+	        String sql = "SELECT * FROM \"Sede\""; 
+	        
+	        try (DatabaseConnection dbConn = new DatabaseConnection();
+	             Statement stmt = dbConn.getConnection().createStatement();
+	             ResultSet rs = stmt.executeQuery(sql)) {
+	            
+	            while (rs.next()) {
+	                Sede sede = new Sede(rs.getString(1),rs.getString(2));
+	                sedes.add(sede);
+	            }
+	        }
+	        return sedes;
+	}
 }

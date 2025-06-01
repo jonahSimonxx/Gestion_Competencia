@@ -4,7 +4,6 @@ import model.Disciplina;
 import utils.DatabaseConnection;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class DisciplinaServices {
     
@@ -126,8 +125,8 @@ public class DisciplinaServices {
     }
     
     // Método para obtener todas las disciplinas
-    public List<Disciplina> obtenerTodasDisciplinas() throws SQLException {
-        List<Disciplina> disciplinas = new ArrayList<>();
+    public ArrayList<Disciplina> obtenerTodasDisciplinas() throws SQLException {
+        ArrayList<Disciplina> disciplinas = new ArrayList<Disciplina>();
         String sql = "SELECT * FROM \"Disciplina\" ORDER BY \"nom_disciplina\"";
         
         try (DatabaseConnection dbConn = new DatabaseConnection();

@@ -3,6 +3,7 @@ package services;
 import model.Registro;
 import utils.DatabaseConnection;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class RegistroServices {
     
@@ -188,4 +189,19 @@ public class RegistroServices {
             return stmt.executeQuery().next();
         }
     }
+    
+    public ArrayList<Registro> obtenerRegistros() throws SQLException {
+		 ArrayList<Registro> registros = new ArrayList<Registro>();
+	        String sql = "SELECT * FROM \"Registro\"";
+	        
+	        try (DatabaseConnection dbConn = new DatabaseConnection();
+	             Statement stmt = dbConn.getConnection().createStatement();
+	             ResultSet rs = stmt.executeQuery(sql)) {
+	            
+	            while (rs.next()) {
+	                registros.add(new Registro(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5)));
+	            }
+	        }
+	        return registros;
+	}
 }

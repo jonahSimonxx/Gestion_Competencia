@@ -2,7 +2,9 @@ package services;
 
 import model.Entrenador;
 import utils.DatabaseConnection;
+
 import java.sql.*;
+import java.util.ArrayList;
 
 public class EntrenadorServices {
     
@@ -143,4 +145,19 @@ public class EntrenadorServices {
             throw new SQLException(errorMsg + ": " + e.getMessage(), e);
         }
     }
-}
+   public ArrayList<Entrenador> obtenerEntrenadores() throws SQLException{
+    	  ArrayList<Entrenador> entrenadores = new ArrayList<Entrenador>();
+          String sql = "SELECT * FROM \"Entrenador\"";
+          
+          try (DatabaseConnection dbConn = new DatabaseConnection();
+               Statement stmt = dbConn.getConnection().createStatement();
+               ResultSet rs = stmt.executeQuery(sql)) {
+              
+              while (rs.next()) {
+                  entrenadores.add(new Entrenador(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4)));
+              }
+          }
+          return entrenadores;
+      }
+    }
+

@@ -6,10 +6,10 @@ public class Registro {
 	private String marcas;
 	private String idAtleta;
 	private String nomCompetencia;
-	private int puesto;
+	private Integer puesto;
 	
 	
-	public Registro(String nomDisciplina, String marcas, String idAtleta, String nomCompetencia, int puesto) {
+	public Registro(String nomDisciplina, String marcas, String idAtleta, String nomCompetencia, Integer puesto) {
 		this.nomDisciplina = nomDisciplina;
 		this.marcas = marcas;
 		this.idAtleta = idAtleta;
@@ -59,11 +59,15 @@ public class Registro {
 
 
 	public int getPuesto() {
-		return puesto;
-	}
+        return puesto != null ? puesto : 0; 
+    }
+	
+	 public Integer getPuestoRaw() {
+	        return puesto;
+	    }
 
 
-	public void setPuesto(int puesto) {
+	public void setPuesto(Integer puesto) {
 		this.puesto = puesto;
 	}
 	

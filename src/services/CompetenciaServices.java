@@ -2,6 +2,8 @@ package services;
 
 import model.Competencia;
 import utils.DatabaseConnection;
+import utils.DateUtils;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,7 @@ public class CompetenciaServices {
         verificarReferencias(competencia);
 
         // Llamada a la función PostgreSQL
-        String sql = "{ call crear_competencia(?, ?, ?, ?, ?, ?) }";
+        String sql = "{ call crear_competencia(?, ?, ?, ?, ?) }";
         
         try (DatabaseConnection dbConn = new DatabaseConnection();
              CallableStatement stmt = dbConn.getConnection().prepareCall(sql)) {
@@ -28,12 +30,9 @@ public class CompetenciaServices {
             stmt.setString(1, competencia.getNomCompetencia());
             stmt.setString(2, competencia.getNomSede());
             stmt.setString(3, competencia.getEstado());
-            stmt.setString(4, competencia.getFechaIni());
-            stmt.setString(5, competencia.getFechaFin());
-            stmt.setString(6, competencia.getNomDisciplina());
-            
+            stmt.setDate(4,competencia.getFechaIni());
+            stmt.setDate(5,competencia.getFechaFin());
             stmt.execute();
-            
         } catch (SQLException e) {
             manejarErrorSQL(e);
         }
@@ -73,7 +72,7 @@ public class CompetenciaServices {
         verificarReferencias(competenciaActualizada);
 
         // Llamada al procedimiento almacenado
-        String sql = "{ call modificar_competencia(?, ?, ?, ?, ?, ?, ?) }";
+        String sql = "{ call modificar_competencia(?, ?, ?, ?, ?, ?) }";
         
         try (DatabaseConnection dbConn = new DatabaseConnection();
              CallableStatement stmt = dbConn.getConnection().prepareCall(sql)) {
@@ -81,10 +80,9 @@ public class CompetenciaServices {
             stmt.setString(1, nombreOriginal);
             stmt.setString(2, competenciaActualizada.getNomSede());
             stmt.setString(3, competenciaActualizada.getEstado());
-            stmt.setString(4, competenciaActualizada.getFechaIni());
-            stmt.setString(5, competenciaActualizada.getFechaFin());
-            stmt.setString(6, competenciaActualizada.getNomDisciplina());
-            stmt.setString(7, competenciaActualizada.getNomCompetencia());
+            stmt.setDate(4, competenciaActualizada.getFechaIni());
+            stmt.setDate(5, competenciaActualizada.getFechaFin());
+            stmt.setString(6, competenciaActualizada.getNomCompetencia());
             
             stmt.execute();
             
@@ -106,17 +104,15 @@ public class CompetenciaServices {
             throw new IllegalArgumentException("El estado es requerido");
         }
         
-        if (competencia.getFechaIni() == null || competencia.getFechaIni().isEmpty()) {
+        if (competencia.getFechaIni() == null) {
             throw new IllegalArgumentException("La fecha de inicio es requerida");
         }
         
-        if (competencia.getFechaFin() == null || competencia.getFechaFin().isEmpty()) {
+        if (competencia.getFechaFin() == null ) {
             throw new IllegalArgumentException("La fecha de fin es requerida");
         }
         
-        if (competencia.getNomDisciplina() == null || competencia.getNomDisciplina().isEmpty()) {
-            throw new IllegalArgumentException("El nombre de la disciplina es requerido");
-        }
+      
         
         // Validar longitudes máximas según la tabla
         if (competencia.getNomCompetencia().length() > 20) {
@@ -131,17 +127,9 @@ public class CompetenciaServices {
             throw new IllegalArgumentException("El estado no puede exceder 20 caracteres");
         }
         
-        if (competencia.getFechaIni().length() > 9) {
-            throw new IllegalArgumentException("La fecha de inicio no puede exceder 9 caracteres");
-        }
+      
         
-        if (competencia.getFechaFin().length() > 9) {
-            throw new IllegalArgumentException("La fecha de fin no puede exceder 9 caracteres");
-        }
-        
-        if (competencia.getNomDisciplina().length() > 20) {
-            throw new IllegalArgumentException("El nombre de la disciplina no puede exceder 20 caracteres");
-        }
+       
     }
     
     private void verificarReferencias(Competencia competencia) throws SQLException {
@@ -153,10 +141,7 @@ public class CompetenciaServices {
                 throw new SQLException("La sede '" + competencia.getNomSede() + "' no existe");
             }
             
-            // Verificar disciplina
-            if (!existeEnTabla(conn, "\"Disciplina\"", "\"nom_disciplina\"", competencia.getNomDisciplina())) {
-                throw new SQLException("La disciplina '" + competencia.getNomDisciplina() + "' no existe");
-            }
+            
         }
     }
     
@@ -193,8 +178,8 @@ public class CompetenciaServices {
         }
     }
     
-    public List<Competencia> obtenerTodasCompetencias() throws SQLException {
-        List<Competencia> competencias = new ArrayList<>();
+    public ArrayList<Competencia> obtenerTodasCompetencias() throws SQLException {
+        ArrayList<Competencia> competencias = new ArrayList<>();
         String sql = "SELECT * FROM \"Competencia\" ORDER BY \"nom_competencia\"";
         
         try (DatabaseConnection dbConn = new DatabaseConnection();
@@ -202,14 +187,7 @@ public class CompetenciaServices {
              ResultSet rs = stmt.executeQuery(sql)) {
             
             while (rs.next()) {
-                competencias.add(new Competencia(
-                    rs.getString("nom_competencia"),
-                    rs.getString("nom_sede"),
-                    rs.getString("estado"),
-                    rs.getString("fecha_ini"),
-                    rs.getString("fecha_fin"),
-                    rs.getString("nom_disciplina")
-                ));
+                competencias.add(new Competencia(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5)));
             }
         }
         return competencias;

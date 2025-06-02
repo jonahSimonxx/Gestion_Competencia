@@ -1,5 +1,6 @@
 package main;
 
+import visuals.Lobby;
 import visuals.Principal;
 
 import java.awt.EventQueue;
@@ -20,8 +21,8 @@ public class Main {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Principal frame = new Principal();
-					frame.setVisible(true);
+					Lobby lobby = new Lobby();
+					lobby.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

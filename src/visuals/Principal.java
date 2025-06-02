@@ -121,12 +121,16 @@ public class Principal extends JFrame {
 	private JTextField textField_nom_disciplina_2;
 	private Registro viejoRegistro;
 	private TableModelRegistro registroTableModel;
-	
-	
-	
+	private boolean esAdmin;
+    private JMenu mnNewMenu;
+    private JButton btnEliminarAtleta;
+    private JButton btn_modificar_atleta;
+    private JToolBar toolBar;
 	
 	@SuppressWarnings("removal")
-	public Principal() {
+	public Principal(boolean esAdmin) {
+		this.esAdmin = esAdmin;
+        setTitle("Sistema de gestión de competencias " + (esAdmin ? "(Administrador)" : "(Usuario)"));
 		setTitle("Sistema de gestión de competencias ");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 603);
@@ -1014,11 +1018,11 @@ public class Principal extends JFrame {
 		table_mostrar = new JTable();
 		scrollPane_mostrar.setViewportView(table_mostrar);
 		
-		JToolBar toolBar = new JToolBar();
+		this.toolBar = new JToolBar();
 		toolBar.setBounds(10, 27, 181, 23);
 		panel_mostrar.add(toolBar);
 		
-		JButton btnEliminarAtleta = new JButton("Eliminar");
+		this.btnEliminarAtleta = new JButton("Eliminar");
 		toolBar.add(btnEliminarAtleta);
 		btnEliminarAtleta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1185,7 +1189,7 @@ public class Principal extends JFrame {
 				}
 		});
 		
-		JButton btn_modificar_atleta = new JButton("Modificar");
+		this.btn_modificar_atleta = new JButton("Modificar");
 		btn_modificar_atleta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(table_mostrar.getSelectedRow() != -1) {
@@ -1415,9 +1419,9 @@ public class Principal extends JFrame {
 		menuBar.setBounds(0, 0, 584, 30);
 		contentPane.add(menuBar);
 		
-		JMenu mnNewMenu = new JMenu("Añadir");
-		menuBar.add(mnNewMenu);
-		
+		this.mnNewMenu = new JMenu("Añadir");
+	    menuBar.add(mnNewMenu);
+	    
 		JButton btnAadirPais = new JButton("Añadir Pais");
 		btnAadirPais.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1546,6 +1550,7 @@ public class Principal extends JFrame {
 				panelPrincipal.validate();
 			}
 		});
+		
 		
 		JButton btnSedes = new JButton("Sedes");
 		btnSedes.addActionListener(new ActionListener() {
@@ -1720,7 +1725,40 @@ public class Principal extends JFrame {
 			}
 		});
 		
+		
+		configurarInterfazSegunRol();
 	
+	}
+	
+	private void configurarInterfazSegunRol() {
+	    if (!esAdmin) {
+	        ocultarOpcionesDeAdmin();
+	    }
+	}
+	 
+	private void ocultarOpcionesDeAdmin() {
+	    // Ocultar menú Añadir
+	    if (mnNewMenu != null) {
+	        mnNewMenu.setVisible(false);
+	    }
+	    
+	    // Ocultar botones Eliminar y Modificar
+	    if (btnEliminarAtleta != null) {
+	        btnEliminarAtleta.setVisible(false);
+	    }
+	    if (btn_modificar_atleta != null) {
+	        btn_modificar_atleta.setVisible(false);
+	    }
+	    
+	    // Ocultar la barra de herramientas (toolbar)
+	    if (toolBar != null) {
+	        toolBar.setVisible(false);
+	    }
+	    
+	    // Hacer la tabla de solo lectura
+	    if (table_mostrar != null) {
+	        table_mostrar.setDefaultEditor(Object.class, null);
+	    }
 	}
 	private static void addPopup(Component component, final JPopupMenu popup) {
 		component.addMouseListener(new MouseAdapter() {

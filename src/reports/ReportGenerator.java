@@ -7,8 +7,8 @@ import utils.DatabaseConnection;
 
 public class ReportGenerator {
     
-    public static List<List<String>> generarReporte(String nombreVista) throws SQLException {
-        List<List<String>> resultados = new ArrayList<>();
+    public static ArrayList<ArrayList<String>> generarReporte(String nombreVista) throws SQLException {
+    	ArrayList<ArrayList<String>> resultados = new ArrayList<>();
         String sql = "SELECT * FROM \"" + nombreVista + "\"";
         
         try (DatabaseConnection dbConnection = new DatabaseConnection();
@@ -20,7 +20,7 @@ public class ReportGenerator {
             int columnCount = metaData.getColumnCount();
             
             // Agregar nombres de columnas como primera fila
-            List<String> columnas = new ArrayList<>();
+            ArrayList<String> columnas = new ArrayList<>();
             for (int i = 1; i <= columnCount; i++) {
                 columnas.add(metaData.getColumnName(i));
             }
@@ -28,7 +28,7 @@ public class ReportGenerator {
             
             // Agregar datos
             while (rs.next()) {
-                List<String> fila = new ArrayList<>();
+            	ArrayList<String> fila = new ArrayList<>();
                 for (int i = 1; i <= columnCount; i++) {
                     fila.add(rs.getString(i));
                 }

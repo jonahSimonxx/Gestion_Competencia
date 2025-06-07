@@ -28,6 +28,7 @@ public class DatabaseCleaner {
             stmt.execute("DELETE FROM \"Competencia\"");
             stmt.execute("DELETE FROM \"Registro\"");
             stmt.execute("DELETE FROM \"Inscripcion\"");
+            stmt.execute("DELETE FROM \"Usuario\"");
             
             // Reactivar restricciones
             stmt.execute("SET CONSTRAINTS ALL IMMEDIATE");

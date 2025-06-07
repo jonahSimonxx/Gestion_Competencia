@@ -1,6 +1,7 @@
 package utils;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import reports.ReportGenerator;
 
@@ -69,7 +70,7 @@ public class ConsoleTester {
         String nombreReporte = "reporte_atletas_incompletos";
         
         try {
-            List<List<String>> reporte = ReportGenerator.generarReporte(nombreReporte);
+ArrayList<ArrayList<String>> reporte = ReportGenerator.generarReporte(nombreReporte);
             
             if (reporte.isEmpty()) {
                 System.out.println("El reporte está vacío");

@@ -1,15 +1,20 @@
 package utils;
 
+import model.Usuario;
+import services.UsuarioServices;
+
 public class Autenticador {
-    public static boolean validarCredenciales(String usuario, String contrasena, boolean esAdmin) {
-        boolean credencialesValidas = false;
-        
-        if(esAdmin) {
-            credencialesValidas = "admin".equals(usuario) && "admin".equals(contrasena);
-        } else {
-            credencialesValidas = "usuario".equals(usuario) && "usuario".equals(contrasena);
-        }
-        
-        return credencialesValidas;
+    private UsuarioServices usuarioServices;
+    
+    public Autenticador() {
+        this.usuarioServices = new UsuarioServices();
+    }
+    
+    public Usuario autenticar(String nombreUsuario, String contrasena) {
+        return usuarioServices.autenticarUsuario(nombreUsuario, contrasena);
+    }
+    
+    public boolean esAdmin(Usuario usuario) {
+        return usuario != null && "admin".equalsIgnoreCase(usuario.getRol());
     }
 }

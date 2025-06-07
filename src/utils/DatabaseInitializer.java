@@ -15,6 +15,7 @@ public class DatabaseInitializer {
         CompetenciaServices competenciaService = new CompetenciaServices();
         RegistroServices registroService = new RegistroServices();
         InscripcionServices inscripcionService = new InscripcionServices();
+        UsuarioServices usuarioService = new UsuarioServices();
 
         try {
             // 1. Insertar países
@@ -572,6 +573,14 @@ public class DatabaseInitializer {
             inscripcionService.insertarInscripcion(inscripcion22);
             inscripcionService.insertarInscripcion(inscripcionBarcelona1);
             inscripcionService.insertarInscripcion(inscripcionBarcelona2);
+            
+            
+            usuarioService.crearUsuario("ADM001", "admin1", "Admin123!", "admin", true);
+            usuarioService.crearUsuario("ADM002", "admin2", "SecurePass456!", "admin", true);
+            
+            // Usuarios normales
+            usuarioService.crearUsuario("USR001", "user1", "UserPass123!", "usuario", true);
+            usuarioService.crearUsuario("USR002", "user2", "RegularUser456!", "usuario", true);
 
             System.out.println("✅ Datos iniciales cargados correctamente");
             

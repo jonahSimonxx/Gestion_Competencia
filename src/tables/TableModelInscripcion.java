@@ -1,4 +1,4 @@
-package visuals;
+package tables;
 
 import java.util.ArrayList;
 

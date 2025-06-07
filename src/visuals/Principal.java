@@ -13,6 +13,17 @@ import model.Inscripcion;
 import model.Pais;
 import model.Registro;
 import model.Sede;
+import model.Usuario;
+import reports.ReportGenerator;
+import reports.ReporteAtletasIncompletos;
+import reports.ReporteAtletasPorPais;
+import reports.ReporteCompetencias;
+import reports.ReporteCompetenciasPorCiudadYSede;
+import reports.ReporteCompetenciasPorPais;
+import reports.ReporteEntrenadores;
+import reports.ReporteEstadoCompetencias;
+import reports.ReporteInscripciones;
+import reports.ReporteResultadosAnuales;
 import services.AtletaServices;
 import services.CiudadServices;
 import services.CompetenciaServices;
@@ -22,6 +33,17 @@ import services.InscripcionServices;
 import services.PaisServices;
 import services.RegistroServices;
 import services.SedeServices;
+import tables.TableModelAtletas;
+import tables.TableModelCiudad;
+import tables.TableModelCompetencia;
+import tables.TableModelDisciplina;
+import tables.TableModelEntrenador;
+import tables.TableModelInscripcion;
+import tables.TableModelPais;
+import tables.TableModelRegistro;
+import tables.TableModelReporte;
+import tables.TableModelSede;
+
 import javax.swing.JButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -50,6 +72,9 @@ import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Toolkit;
+import java.awt.Font;
+import java.awt.Canvas;
+import javax.swing.SwingConstants;
 
 
 public class Principal extends JFrame {
@@ -74,6 +99,7 @@ public class Principal extends JFrame {
 	private Disciplina viejaDisciplina;
 	private Entrenador viejoEntrenador;
 	private Sede viejaSede;
+	private ReportGenerator generadorReportes = new ReportGenerator();
 	private AtletaServices servicioAtleta = new AtletaServices();
 	private CiudadServices servicioCiudad = new CiudadServices();
 	private PaisServices servicioPais = new PaisServices();
@@ -89,7 +115,7 @@ public class Principal extends JFrame {
 	private TableModelSede sedeTableModel;
 	private JTextField textField_nom_pais_2;
 	private JTextField textField_nom_ciudad_1;
-	
+	private TableModelReporte reporteTableModel;
 	private int entidad;
 	private JTextField textField_nom_pais_1;
 	private JTextField textField_disciplina_1;
@@ -121,29 +147,45 @@ public class Principal extends JFrame {
 	private JTextField textField_nom_disciplina_2;
 	private Registro viejoRegistro;
 	private TableModelRegistro registroTableModel;
+	private JButton btn_rep_atletas_incompletos;
 	private boolean esAdmin;
-    private JMenu mnNewMenu;
-    private JButton btnEliminarAtleta;
-    private JButton btn_modificar_atleta;
-    private JToolBar toolBar;
+	private JMenu mnNewMenu;
+	private JButton btnEliminarAtleta;
+	private JButton btn_modificar_atleta;
+	private JToolBar toolBar;
+	private Usuario usuarioActual;
+	
+	
+	
 	
 	@SuppressWarnings("removal")
-	public Principal(boolean esAdmin) {
+	public Principal(boolean esAdmin, Usuario usuario) {
 		this.esAdmin = esAdmin;
-        setTitle("Sistema de gestión de competencias " + (esAdmin ? "(Administrador)" : "(Usuario)"));
+		this.usuarioActual = usuario;
+		setTitle("Sistema de gestión de competencias " + (esAdmin ? "(Administrador)" : "(Usuario)"));
 		setTitle("Sistema de gestión de competencias ");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 600, 603);
+		setBounds(100, 100, 1100, 700);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		final JPanel panelPrincipal = new JPanel();
-		panelPrincipal.setBounds(0, 30, 584, 534);
+		panelPrincipal.setBounds(0, 30, 1084, 631);
 		contentPane.add(panelPrincipal);
 		contentPane.add(panelPrincipal);
 		panelPrincipal.setLayout(new CardLayout(0, 0));
+		
+		JPanel panel_bienvenida = new JPanel();
+		panelPrincipal.add(panel_bienvenida, "name_2575985823000300");
+		panel_bienvenida.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Bienvenido");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 71));
+		lblNewLabel.setBounds(248, 0, 584, 534);
+		panel_bienvenida.add(lblNewLabel);
 		
 		final JPanel panel_añadir = new JPanel();
 		panelPrincipal.add(panel_añadir, "name_2462234680338100");
@@ -153,72 +195,72 @@ public class Principal extends JFrame {
 		panel_añadir_atleta.setLayout(null);
 		
 		JLabel lblNombre = new JLabel("Nombre :");
-		lblNombre.setBounds(10, 50, 56, 14);
+		lblNombre.setBounds(430, 51, 56, 14);
 		panel_añadir_atleta.add(lblNombre);
 		
 		JLabel lblId = new JLabel("ID :");
-		lblId.setBounds(10, 94, 35, 14);
+		lblId.setBounds(430, 95, 35, 14);
 		panel_añadir_atleta.add(lblId);
 		
 		JLabel lblEdad = new JLabel("Edad :");
-		lblEdad.setBounds(10, 293, 41, 14);
+		lblEdad.setBounds(430, 294, 41, 14);
 		panel_añadir_atleta.add(lblEdad);
 		
 		JLabel lblPais = new JLabel("Pa\u00EDs :");
-		lblPais.setBounds(10, 136, 41, 14);
+		lblPais.setBounds(430, 137, 41, 14);
 		panel_añadir_atleta.add(lblPais);
 		
 		JLabel lblCategoriaDeportiva = new JLabel("Categor\u00EDa deportiva :");
-		lblCategoriaDeportiva.setBounds(10, 181, 109, 14);
+		lblCategoriaDeportiva.setBounds(430, 182, 109, 14);
 		panel_añadir_atleta.add(lblCategoriaDeportiva);
 		
 		JLabel lblIdEntrenador = new JLabel("ID Entrenador :");
-		lblIdEntrenador.setBounds(10, 232, 89, 14);
+		lblIdEntrenador.setBounds(430, 233, 89, 14);
 		panel_añadir_atleta.add(lblIdEntrenador);
 		
 		textField_id_Entrenador_Atleta = new JTextField();
 		textField_id_Entrenador_Atleta.setColumns(10);
-		textField_id_Entrenador_Atleta.setBounds(109, 229, 124, 20);
+		textField_id_Entrenador_Atleta.setBounds(529, 230, 124, 20);
 		panel_añadir_atleta.add(textField_id_Entrenador_Atleta);
 		
 		JLabel lblSexo = new JLabel("Sexo :");
-		lblSexo.setBounds(10, 350, 41, 14);
+		lblSexo.setBounds(430, 351, 41, 14);
 		panel_añadir_atleta.add(lblSexo);
 		
 		final JRadioButton rdbtn_masculinoAtleta = new JRadioButton("Masculino");
-		rdbtn_masculinoAtleta.setBounds(70, 346, 89, 23);
+		rdbtn_masculinoAtleta.setBounds(490, 347, 89, 23);
 		panel_añadir_atleta.add(rdbtn_masculinoAtleta);
 		
 		final JRadioButton rdbtn_femeninoAtleta = new JRadioButton("Femenino");
-		rdbtn_femeninoAtleta.setBounds(161, 346, 89, 23);
+		rdbtn_femeninoAtleta.setBounds(581, 347, 89, 23);
 		panel_añadir_atleta.add(rdbtn_femeninoAtleta);
 		sexo.add(rdbtn_femeninoAtleta);
 		sexo.add(rdbtn_masculinoAtleta);
 		
 		
 		textField_nombreAtleta = new JTextField();
-		textField_nombreAtleta.setBounds(76, 47, 163, 20);
+		textField_nombreAtleta.setBounds(496, 48, 163, 20);
 		panel_añadir_atleta.add(textField_nombreAtleta);
 		textField_nombreAtleta.setColumns(10);
 		
 		final JTextField textField_idAtleta = new JTextField();
 		textField_idAtleta.setColumns(10);
-		textField_idAtleta.setBounds(55, 94, 86, 20);
+		textField_idAtleta.setBounds(475, 95, 86, 20);
 		panel_añadir_atleta.add(textField_idAtleta);
 		
 		textField_paisAtleta = new JTextField();
 		textField_paisAtleta.setColumns(10);
-		textField_paisAtleta.setBounds(61, 133, 86, 20);
+		textField_paisAtleta.setBounds(481, 134, 86, 20);
 		panel_añadir_atleta.add(textField_paisAtleta);
 		
 		final JSpinner spinner_edadAtleta = new JSpinner();
 		spinner_edadAtleta.setModel(new SpinnerNumberModel(new Integer(18), new Integer(18), null, new Integer(1)));
-		spinner_edadAtleta.setBounds(55, 290, 41, 20);
+		spinner_edadAtleta.setBounds(475, 291, 41, 20);
 		panel_añadir_atleta.add(spinner_edadAtleta);
 		
 		textField_catDeportAtleta = new JTextField();
 		textField_catDeportAtleta.setColumns(10);
-		textField_catDeportAtleta.setBounds(129, 178, 124, 20);
+		textField_catDeportAtleta.setBounds(549, 179, 124, 20);
 		panel_añadir_atleta.add(textField_catDeportAtleta);
 		
 		final JButton btnAñadir_atleta = new JButton("A\u00F1adir");
@@ -280,7 +322,7 @@ public class Principal extends JFrame {
 			
 		});
 		
-		btnAñadir_atleta.setBounds(485, 500, 89, 23);
+		btnAñadir_atleta.setBounds(490, 466, 100, 40);
 		panel_añadir_atleta.add(btnAñadir_atleta);
 		
 		final JPanel panel_añadir_ciudad = new JPanel();
@@ -288,21 +330,21 @@ public class Principal extends JFrame {
 		panel_añadir_ciudad.setLayout(null);
 		
 		JLabel lblPais_1 = new JLabel("Pais :");
-		lblPais_1.setBounds(10, 32, 46, 14);
+		lblPais_1.setBounds(433, 159, 46, 14);
 		panel_añadir_ciudad.add(lblPais_1);
 		
 		textField_nom_pais_2 = new JTextField();
-		textField_nom_pais_2.setBounds(66, 29, 103, 20);
+		textField_nom_pais_2.setBounds(489, 156, 103, 20);
 		panel_añadir_ciudad.add(textField_nom_pais_2);
 		textField_nom_pais_2.setColumns(10);
 		
 		JLabel lblCiudad = new JLabel("Ciudad :");
-		lblCiudad.setBounds(10, 67, 46, 14);
+		lblCiudad.setBounds(433, 194, 46, 14);
 		panel_añadir_ciudad.add(lblCiudad);
 		
 		textField_nom_ciudad_1 = new JTextField();
 		textField_nom_ciudad_1.setColumns(10);
-		textField_nom_ciudad_1.setBounds(66, 64, 103, 20);
+		textField_nom_ciudad_1.setBounds(489, 191, 103, 20);
 		panel_añadir_ciudad.add(textField_nom_ciudad_1);
 		
 		final JButton btnAñadir_ciudad = new JButton("Añadir");
@@ -357,7 +399,7 @@ public class Principal extends JFrame {
 			
 			}
 		});
-		btnAñadir_ciudad.setBounds(485, 500, 89, 23);
+		btnAñadir_ciudad.setBounds(489, 307, 100, 40);
 		panel_añadir_ciudad.add(btnAñadir_ciudad);
 		
 		final JPanel panel_añadir_pais = new JPanel();
@@ -365,12 +407,12 @@ public class Principal extends JFrame {
 		panel_añadir_pais.setLayout(null);
 		
 		JLabel label = new JLabel("Pais :");
-		label.setBounds(10, 37, 46, 14);
+		label.setBounds(438, 178, 46, 14);
 		panel_añadir_pais.add(label);
 		
 		textField_nom_pais_1 = new JTextField();
 		textField_nom_pais_1.setColumns(10);
-		textField_nom_pais_1.setBounds(66, 34, 103, 20);
+		textField_nom_pais_1.setBounds(494, 175, 103, 20);
 		panel_añadir_pais.add(textField_nom_pais_1);
 		
 		final JButton btnAñadir_pais = new JButton("Añadir");
@@ -425,7 +467,7 @@ public class Principal extends JFrame {
 			
 			}
 		});
-		btnAñadir_pais.setBounds(485, 500, 89, 23);
+		btnAñadir_pais.setBounds(480, 288, 100, 40);
 		panel_añadir_pais.add(btnAñadir_pais);
 		
 		final JPanel panel_añadir_disciplina = new JPanel();
@@ -433,12 +475,12 @@ public class Principal extends JFrame {
 		panel_añadir_disciplina.setLayout(null);
 		
 		JLabel lblDisciplina = new JLabel("Disciplina :");
-		lblDisciplina.setBounds(13, 37, 71, 14);
+		lblDisciplina.setBounds(398, 181, 71, 14);
 		panel_añadir_disciplina.add(lblDisciplina);
 		
 		textField_disciplina_1 = new JTextField();
 		textField_disciplina_1.setColumns(10);
-		textField_disciplina_1.setBounds(94, 34, 189, 20);
+		textField_disciplina_1.setBounds(479, 178, 189, 20);
 		panel_añadir_disciplina.add(textField_disciplina_1);
 		
 		final JButton btnAñadir_disciplina = new JButton("Añadir");
@@ -492,7 +534,7 @@ public class Principal extends JFrame {
 			
 			}
 		});
-		btnAñadir_disciplina.setBounds(485, 500, 89, 23);
+		btnAñadir_disciplina.setBounds(506, 291, 100, 40);
 		panel_añadir_disciplina.add(btnAñadir_disciplina);
 		
 		final JPanel panel_añadir_entrenador = new JPanel();
@@ -500,39 +542,39 @@ public class Principal extends JFrame {
 		panel_añadir_entrenador.setLayout(null);
 		
 		JLabel lblNombre_1 = new JLabel("Nombre :");
-		lblNombre_1.setBounds(10, 29, 71, 14);
+		lblNombre_1.setBounds(429, 93, 71, 14);
 		panel_añadir_entrenador.add(lblNombre_1);
 		
 		textField_nombre_entrenador = new JTextField();
 		textField_nombre_entrenador.setColumns(10);
-		textField_nombre_entrenador.setBounds(91, 26, 189, 20);
+		textField_nombre_entrenador.setBounds(510, 90, 189, 20);
 		panel_añadir_entrenador.add(textField_nombre_entrenador);
 		
 		JLabel lblId_1 = new JLabel("ID :");
-		lblId_1.setBounds(10, 72, 48, 14);
+		lblId_1.setBounds(429, 136, 48, 14);
 		panel_añadir_entrenador.add(lblId_1);
 		
 		textField_id_entrenador = new JTextField();
 		textField_id_entrenador.setColumns(10);
-		textField_id_entrenador.setBounds(68, 69, 189, 20);
+		textField_id_entrenador.setBounds(487, 133, 189, 20);
 		panel_añadir_entrenador.add(textField_id_entrenador);
 		
 		JLabel lblEspecialidad = new JLabel("Especialidad :");
-		lblEspecialidad.setBounds(10, 116, 86, 14);
+		lblEspecialidad.setBounds(429, 180, 86, 14);
 		panel_añadir_entrenador.add(lblEspecialidad);
 		
 		textField_especialidad_entrenador = new JTextField();
 		textField_especialidad_entrenador.setColumns(10);
-		textField_especialidad_entrenador.setBounds(106, 113, 189, 20);
+		textField_especialidad_entrenador.setBounds(525, 177, 189, 20);
 		panel_añadir_entrenador.add(textField_especialidad_entrenador);
 		
 		JLabel lblDireccion = new JLabel("Direccion :");
-		lblDireccion.setBounds(10, 159, 71, 14);
+		lblDireccion.setBounds(429, 223, 71, 14);
 		panel_añadir_entrenador.add(lblDireccion);
 		
 		textField_direccion_entrenador = new JTextField();
 		textField_direccion_entrenador.setColumns(10);
-		textField_direccion_entrenador.setBounds(91, 156, 189, 20);
+		textField_direccion_entrenador.setBounds(510, 220, 189, 20);
 		panel_añadir_entrenador.add(textField_direccion_entrenador);
 		
 		final JButton btnAñadir_entrenador = new JButton("Añadir");
@@ -589,7 +631,7 @@ public class Principal extends JFrame {
 			
 			}
 		});
-		btnAñadir_entrenador.setBounds(485, 500, 89, 23);
+		btnAñadir_entrenador.setBounds(510, 342, 100, 40);
 		panel_añadir_entrenador.add(btnAñadir_entrenador);
 		
 		final JPanel panel_añadir_sede = new JPanel();
@@ -598,20 +640,20 @@ public class Principal extends JFrame {
 		
 		textField_sede_1 = new JTextField();
 		textField_sede_1.setColumns(10);
-		textField_sede_1.setBounds(74, 23, 189, 20);
+		textField_sede_1.setBounds(464, 140, 189, 20);
 		panel_añadir_sede.add(textField_sede_1);
 		
 		JLabel lblSede = new JLabel("Sede :");
-		lblSede.setBounds(10, 26, 54, 14);
+		lblSede.setBounds(400, 143, 54, 14);
 		panel_añadir_sede.add(lblSede);
 		
 		JLabel lblCiudad_1 = new JLabel("Ciudad :");
-		lblCiudad_1.setBounds(10, 69, 59, 14);
+		lblCiudad_1.setBounds(400, 186, 59, 14);
 		panel_añadir_sede.add(lblCiudad_1);
 		
 		textField_nom_ciudad_2 = new JTextField();
 		textField_nom_ciudad_2.setColumns(10);
-		textField_nom_ciudad_2.setBounds(79, 66, 189, 20);
+		textField_nom_ciudad_2.setBounds(469, 183, 189, 20);
 		panel_añadir_sede.add(textField_nom_ciudad_2);
 		
 		final JButton btnAñadir_sede = new JButton("Añadir");
@@ -665,7 +707,7 @@ public class Principal extends JFrame {
 				JOptionPane.showMessageDialog(panel_añadir_sede, "No se ha " + accion + " la sede, revise sus entradas");
 			}
 		});
-		btnAñadir_sede.setBounds(485, 500, 89, 23);
+		btnAñadir_sede.setBounds(485, 282, 100, 40);
 		panel_añadir_sede.add(btnAñadir_sede);
 		
 		final JPanel panel_añadir_competencia = new JPanel();
@@ -674,47 +716,47 @@ public class Principal extends JFrame {
 		
 		textField_nom_competencia = new JTextField();
 		textField_nom_competencia.setColumns(10);
-		textField_nom_competencia.setBounds(74, 22, 189, 20);
+		textField_nom_competencia.setBounds(476, 100, 189, 20);
 		panel_añadir_competencia.add(textField_nom_competencia);
 		
 		JLabel lblNombre_2 = new JLabel("Nombre :");
-		lblNombre_2.setBounds(10, 25, 54, 14);
+		lblNombre_2.setBounds(412, 103, 54, 14);
 		panel_añadir_competencia.add(lblNombre_2);
 		
 		JLabel lblSede_1 = new JLabel("Sede :");
-		lblSede_1.setBounds(10, 68, 42, 14);
+		lblSede_1.setBounds(412, 146, 42, 14);
 		panel_añadir_competencia.add(lblSede_1);
 		
 		textField_sede_2 = new JTextField();
 		textField_sede_2.setColumns(10);
-		textField_sede_2.setBounds(62, 65, 189, 20);
+		textField_sede_2.setBounds(464, 143, 189, 20);
 		panel_añadir_competencia.add(textField_sede_2);
 		
 		JLabel lblFechaInicio = new JLabel("Fecha Inicio :");
-		lblFechaInicio.setBounds(10, 117, 82, 14);
+		lblFechaInicio.setBounds(412, 195, 82, 14);
 		panel_añadir_competencia.add(lblFechaInicio);
 		
 		textField_fecha_ini_competencia = new JTextField();
 		textField_fecha_ini_competencia.setColumns(10);
-		textField_fecha_ini_competencia.setBounds(95, 114, 120, 20);
+		textField_fecha_ini_competencia.setBounds(497, 192, 120, 20);
 		panel_añadir_competencia.add(textField_fecha_ini_competencia);
 		
 		JLabel lblFechaFin = new JLabel("Fecha Fin :");
-		lblFechaFin.setBounds(10, 160, 82, 14);
+		lblFechaFin.setBounds(412, 238, 82, 14);
 		panel_añadir_competencia.add(lblFechaFin);
 		
 		textField_fecha_fin_competencia = new JTextField();
 		textField_fecha_fin_competencia.setColumns(10);
-		textField_fecha_fin_competencia.setBounds(95, 157, 120, 20);
+		textField_fecha_fin_competencia.setBounds(497, 235, 120, 20);
 		panel_añadir_competencia.add(textField_fecha_fin_competencia);
 		
 		JLabel lblEstado = new JLabel("Estado :");
-		lblEstado.setBounds(10, 212, 64, 14);
+		lblEstado.setBounds(412, 290, 64, 14);
 		panel_añadir_competencia.add(lblEstado);
 		
 		textField_estado_competencia = new JTextField();
 		textField_estado_competencia.setColumns(10);
-		textField_estado_competencia.setBounds(83, 209, 120, 20);
+		textField_estado_competencia.setBounds(476, 287, 120, 20);
 		panel_añadir_competencia.add(textField_estado_competencia);
 		
 		final JButton btnAñadir_competencia = new JButton("Añadir");
@@ -772,15 +814,15 @@ public class Principal extends JFrame {
 			
 			}
 		});
-		btnAñadir_competencia.setBounds(485, 500, 89, 23);
+		btnAñadir_competencia.setBounds(476, 377, 100, 40);
 		panel_añadir_competencia.add(btnAñadir_competencia);
 		
 		JLabel lblUseaaaammdd = new JLabel("USE (AAAA-MM-DD) !!!!!!!");
-		lblUseaaaammdd.setBounds(236, 160, 178, 14);
+		lblUseaaaammdd.setBounds(638, 238, 178, 14);
 		panel_añadir_competencia.add(lblUseaaaammdd);
 		
 		JLabel label_1 = new JLabel("USE (AAAA-MM-DD) !!!!!!!");
-		label_1.setBounds(236, 117, 178, 14);
+		label_1.setBounds(638, 195, 178, 14);
 		panel_añadir_competencia.add(label_1);
 		
 		final JPanel panel_añadir_inscripcion = new JPanel();
@@ -789,55 +831,55 @@ public class Principal extends JFrame {
 		
 		textField_nom_competencia_2 = new JTextField();
 		textField_nom_competencia_2.setColumns(10);
-		textField_nom_competencia_2.setBounds(109, 11, 189, 20);
+		textField_nom_competencia_2.setBounds(531, 117, 189, 20);
 		panel_añadir_inscripcion.add(textField_nom_competencia_2);
 		
 		JLabel lblCompetencia = new JLabel("Competencia :");
-		lblCompetencia.setBounds(10, 14, 89, 14);
+		lblCompetencia.setBounds(432, 120, 89, 14);
 		panel_añadir_inscripcion.add(lblCompetencia);
 		
 		JLabel lblIdDelAtleta = new JLabel("ID del Atleta :");
-		lblIdDelAtleta.setBounds(10, 57, 89, 14);
+		lblIdDelAtleta.setBounds(432, 163, 89, 14);
 		panel_añadir_inscripcion.add(lblIdDelAtleta);
 		
 		textField_id_atleta_2 = new JTextField();
 		textField_id_atleta_2.setColumns(10);
-		textField_id_atleta_2.setBounds(109, 54, 189, 20);
+		textField_id_atleta_2.setBounds(517, 160, 189, 20);
 		panel_añadir_inscripcion.add(textField_id_atleta_2);
 		
 		JLabel lblIdDelEntrenador = new JLabel("ID del Entrenador :");
-		lblIdDelEntrenador.setBounds(10, 100, 120, 14);
+		lblIdDelEntrenador.setBounds(432, 206, 120, 14);
 		panel_añadir_inscripcion.add(lblIdDelEntrenador);
 		
 		textField_id_entrenador_2 = new JTextField();
 		textField_id_entrenador_2.setColumns(10);
-		textField_id_entrenador_2.setBounds(140, 97, 189, 20);
+		textField_id_entrenador_2.setBounds(543, 203, 189, 20);
 		panel_añadir_inscripcion.add(textField_id_entrenador_2);
 		
 		JLabel label_2 = new JLabel("Fecha Inicio :");
-		label_2.setBounds(10, 153, 82, 14);
+		label_2.setBounds(432, 259, 82, 14);
 		panel_añadir_inscripcion.add(label_2);
 		
 		JLabel label_3 = new JLabel("Fecha Fin :");
-		label_3.setBounds(10, 196, 82, 14);
+		label_3.setBounds(432, 302, 82, 14);
 		panel_añadir_inscripcion.add(label_3);
 		
 		textField_fecha_fin_inscripcion = new JTextField();
 		textField_fecha_fin_inscripcion.setColumns(10);
-		textField_fecha_fin_inscripcion.setBounds(95, 193, 120, 20);
+		textField_fecha_fin_inscripcion.setBounds(517, 299, 120, 20);
 		panel_añadir_inscripcion.add(textField_fecha_fin_inscripcion);
 		
 		textField_fecha_ini_inscripcion = new JTextField();
 		textField_fecha_ini_inscripcion.setColumns(10);
-		textField_fecha_ini_inscripcion.setBounds(95, 150, 120, 20);
+		textField_fecha_ini_inscripcion.setBounds(517, 256, 120, 20);
 		panel_añadir_inscripcion.add(textField_fecha_ini_inscripcion);
 		
 		JLabel label_4 = new JLabel("USE (AAAA-MM-DD) !!!!!!!");
-		label_4.setBounds(236, 153, 178, 14);
+		label_4.setBounds(658, 259, 178, 14);
 		panel_añadir_inscripcion.add(label_4);
 		
 		JLabel label_5 = new JLabel("USE (AAAA-MM-DD) !!!!!!!");
-		label_5.setBounds(236, 196, 178, 14);
+		label_5.setBounds(658, 302, 178, 14);
 		panel_añadir_inscripcion.add(label_5);
 		
 		final JButton btnAñadir_inscripcion = new JButton("Añadir");
@@ -896,7 +938,7 @@ public class Principal extends JFrame {
 			
 			}
 		});
-		btnAñadir_inscripcion.setBounds(485, 500, 89, 23);
+		btnAñadir_inscripcion.setBounds(531, 372, 100, 40);
 		panel_añadir_inscripcion.add(btnAñadir_inscripcion);
 		
 		final JPanel panel_añadir_registro = new JPanel();
@@ -905,47 +947,47 @@ public class Principal extends JFrame {
 		
 		textField_nom_competencia_3 = new JTextField();
 		textField_nom_competencia_3.setColumns(10);
-		textField_nom_competencia_3.setBounds(109, 22, 189, 20);
+		textField_nom_competencia_3.setBounds(465, 92, 189, 20);
 		panel_añadir_registro.add(textField_nom_competencia_3);
 		
 		JLabel label_6 = new JLabel("Competencia :");
-		label_6.setBounds(10, 25, 89, 14);
+		label_6.setBounds(366, 95, 89, 14);
 		panel_añadir_registro.add(label_6);
 		
 		JLabel label_7 = new JLabel("ID del Atleta :");
-		label_7.setBounds(10, 68, 89, 14);
+		label_7.setBounds(366, 138, 89, 14);
 		panel_añadir_registro.add(label_7);
 		
 		textField_id_atleta_3 = new JTextField();
 		textField_id_atleta_3.setColumns(10);
-		textField_id_atleta_3.setBounds(109, 65, 189, 20);
+		textField_id_atleta_3.setBounds(465, 135, 189, 20);
 		panel_añadir_registro.add(textField_id_atleta_3);
 		
 		JLabel lblMarcas = new JLabel("Marcas :");
-		lblMarcas.setBounds(10, 151, 62, 14);
+		lblMarcas.setBounds(366, 221, 62, 14);
 		panel_añadir_registro.add(lblMarcas);
 		
 		textField_marcas = new JTextField();
 		textField_marcas.setColumns(10);
-		textField_marcas.setBounds(94, 148, 189, 20);
+		textField_marcas.setBounds(450, 218, 189, 20);
 		panel_añadir_registro.add(textField_marcas);
 		
 		JLabel lblLugar = new JLabel("Lugar :");
-		lblLugar.setBounds(10, 190, 51, 14);
+		lblLugar.setBounds(366, 260, 51, 14);
 		panel_añadir_registro.add(lblLugar);
 		
 		final JSpinner spinner_lugar = new JSpinner();
 		spinner_lugar.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
-		spinner_lugar.setBounds(71, 187, 45, 20);
+		spinner_lugar.setBounds(427, 257, 45, 20);
 		panel_añadir_registro.add(spinner_lugar);
 		
 		JLabel lblDisciplina_1 = new JLabel("Disciplina :");
-		lblDisciplina_1.setBounds(10, 113, 62, 14);
+		lblDisciplina_1.setBounds(366, 183, 62, 14);
 		panel_añadir_registro.add(lblDisciplina_1);
 		
 		textField_nom_disciplina_2 = new JTextField();
 		textField_nom_disciplina_2.setColumns(10);
-		textField_nom_disciplina_2.setBounds(94, 110, 189, 20);
+		textField_nom_disciplina_2.setBounds(450, 180, 189, 20);
 		panel_añadir_registro.add(textField_nom_disciplina_2);
 		
 		final JButton btnAñadir_registro = new JButton("Añadir");
@@ -1004,7 +1046,7 @@ public class Principal extends JFrame {
 			
 			}
 		});
-		btnAñadir_registro.setBounds(485, 500, 89, 23);
+		btnAñadir_registro.setBounds(505, 306, 100, 40);
 		panel_añadir_registro.add(btnAñadir_registro);
 		
 		final JPanel panel_mostrar = new JPanel();
@@ -1012,18 +1054,19 @@ public class Principal extends JFrame {
 		panel_mostrar.setLayout(null);
 		
 		JScrollPane scrollPane_mostrar = new JScrollPane();
-		scrollPane_mostrar.setBounds(10, 50, 564, 503);
+		scrollPane_mostrar.setBounds(10, 50, 1064, 570);
 		panel_mostrar.add(scrollPane_mostrar);
 		
 		table_mostrar = new JTable();
 		scrollPane_mostrar.setViewportView(table_mostrar);
 		
-		this.toolBar = new JToolBar();
-		toolBar.setBounds(10, 27, 181, 23);
-		panel_mostrar.add(toolBar);
+		final JToolBar toolBar_modificacion = new JToolBar();
+		toolBar_modificacion.setFloatable(false);
+		toolBar_modificacion.setBounds(10, 11, 161, 39);
+		panel_mostrar.add(toolBar_modificacion);
 		
 		this.btnEliminarAtleta = new JButton("Eliminar");
-		toolBar.add(btnEliminarAtleta);
+		toolBar_modificacion.add(btnEliminarAtleta);
 		btnEliminarAtleta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(table_mostrar.getSelectedRow() != -1) {
@@ -1219,6 +1262,7 @@ public class Principal extends JFrame {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+				   break;
 			   case 2:
 				   try {
 					ArrayList<Ciudad> ciudades = servicioCiudad.obtenerCiudades();
@@ -1240,6 +1284,7 @@ public class Principal extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				   break;
 			   case 3:
 				   try {
 						ArrayList<Pais> paises = servicioPais.obtenerPaises();
@@ -1260,6 +1305,7 @@ public class Principal extends JFrame {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+				   break;
 			   case 4:
 				   try {
 						ArrayList<Disciplina> disciplinas = servicioDisciplina.obtenerTodasDisciplinas();
@@ -1280,6 +1326,7 @@ public class Principal extends JFrame {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+				   break;
 			   case 5:
 				   try {
 						ArrayList<Entrenador> entrenadores = servicioEntrenador.obtenerEntrenadores();
@@ -1303,6 +1350,7 @@ public class Principal extends JFrame {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					} 
+				   break;
 			   case 6 :
 				   try {
 						ArrayList<Sede> sedes = servicioSede.obtenerTodasSedes();
@@ -1323,7 +1371,7 @@ public class Principal extends JFrame {
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
-					} 
+					}
 				   break;
 			   case 7:
 				   try {
@@ -1413,15 +1461,21 @@ public class Principal extends JFrame {
 				else
 					JOptionPane.showMessageDialog(panel_mostrar, "Seleccione una entidad para modificar");}
 		});
-		toolBar.add(btn_modificar_atleta);
+		toolBar_modificacion.add(btn_modificar_atleta);
+		
+		JLabel lbl_nombre_reporte = new JLabel("New label");
+		lbl_nombre_reporte.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_nombre_reporte.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lbl_nombre_reporte.setBounds(306, 11, 409, 28);
+		panel_mostrar.add(lbl_nombre_reporte);
 		
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 584, 30);
+		menuBar.setBounds(0, 0, 234, 30);
 		contentPane.add(menuBar);
 		
 		this.mnNewMenu = new JMenu("Añadir");
-	    menuBar.add(mnNewMenu);
-	    
+		menuBar.add(mnNewMenu);
+		
 		JButton btnAadirPais = new JButton("Añadir Pais");
 		btnAadirPais.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1542,6 +1596,8 @@ public class Principal extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				lbl_nombre_reporte.setVisible(false);
+				toolBar_modificacion.setVisible(true);
 				entidad = 3;
 				table_mostrar.setModel(paisTableModel);
 				panelPrincipal.removeAll();
@@ -1550,7 +1606,6 @@ public class Principal extends JFrame {
 				panelPrincipal.validate();
 			}
 		});
-		
 		
 		JButton btnSedes = new JButton("Sedes");
 		btnSedes.addActionListener(new ActionListener() {
@@ -1561,6 +1616,8 @@ public class Principal extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				lbl_nombre_reporte.setVisible(false);
+				toolBar_modificacion.setVisible(true);
 				entidad = 6;
 				table_mostrar.setModel(sedeTableModel);
 				panelPrincipal.removeAll();
@@ -1581,6 +1638,8 @@ public class Principal extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				lbl_nombre_reporte.setVisible(false);
+				toolBar_modificacion.setVisible(true);
 				entidad = 4;
 				table_mostrar.setModel(disciplinaTableModel);
 				panelPrincipal.removeAll();
@@ -1599,6 +1658,8 @@ public class Principal extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				lbl_nombre_reporte.setVisible(false);
+				toolBar_modificacion.setVisible(true);
 				entidad = 2;
 				table_mostrar.setModel(ciudadTableModel);
 				panelPrincipal.removeAll();
@@ -1620,6 +1681,8 @@ public class Principal extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				lbl_nombre_reporte.setVisible(false);
+				toolBar_modificacion.setVisible(true);
 				entidad = 1;
 				table_mostrar.setModel(atletasTableModel);
 				panelPrincipal.removeAll();
@@ -1639,6 +1702,8 @@ public class Principal extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				lbl_nombre_reporte.setVisible(false);
+				toolBar_modificacion.setVisible(true);
 				entidad = 9;
 				table_mostrar.setModel(registroTableModel);
 				panelPrincipal.removeAll();
@@ -1659,6 +1724,8 @@ public class Principal extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				lbl_nombre_reporte.setVisible(false);
+				toolBar_modificacion.setVisible(true);
 				entidad = 5;
 				table_mostrar.setModel(entrenadorTableModel);
 				panelPrincipal.removeAll();
@@ -1677,6 +1744,8 @@ public class Principal extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				lbl_nombre_reporte.setVisible(false);
+				toolBar_modificacion.setVisible(true);
 				entidad = 8;
 				table_mostrar.setModel(inscripcionTableModel);
 				panelPrincipal.removeAll();
@@ -1697,6 +1766,8 @@ public class Principal extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				lbl_nombre_reporte.setVisible(false);
+				toolBar_modificacion.setVisible(true);
 				entidad = 7;
 				table_mostrar.setModel(competenciaTableModel);
 				panelPrincipal.removeAll();
@@ -1707,11 +1778,206 @@ public class Principal extends JFrame {
 		});
 		menu.add(btnCompetencias);
 		
-		JButton btnSalir = new JButton("Salir");
+		JMenu mnNewMenu_1 = new JMenu("Reportes");
+		menuBar.add(mnNewMenu_1);
+		
+		btn_rep_atletas_incompletos = new JButton("Atletas Incompletos");
+		btn_rep_atletas_incompletos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					reporteTableModel = new TableModelReporte(ReporteAtletasIncompletos.obtenerAtletasIncompletos(),5);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				lbl_nombre_reporte.setVisible(true);
+				lbl_nombre_reporte.setText("Reporte Atletas Incompletos");
+			    toolBar_modificacion.setVisible(false);
+				table_mostrar.setModel(reporteTableModel);
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel_mostrar);
+				panelPrincipal.repaint();
+				panelPrincipal.validate();
+			}
+		});
+		
+		JButton btn_rep_inscripciones = new JButton("Inscripciones");
+		btn_rep_inscripciones.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					reporteTableModel = new TableModelReporte(ReporteInscripciones.obtenerInscripciones(),1);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				lbl_nombre_reporte.setVisible(true);
+				lbl_nombre_reporte.setText("Reporte Inscripciones");
+				toolBar_modificacion.setVisible(false);
+				table_mostrar.setModel(reporteTableModel);
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel_mostrar);
+				panelPrincipal.repaint();
+				panelPrincipal.validate();
+			}
+		});
+		mnNewMenu_1.add(btn_rep_inscripciones);
+		
+		JButton btn_rep_entrenadores = new JButton("Entrenadores");
+		btn_rep_entrenadores.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					reporteTableModel = new TableModelReporte(ReporteEntrenadores.obtenerEntrenadores(),2);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				lbl_nombre_reporte.setVisible(true);
+				lbl_nombre_reporte.setText("Reporte Entrenadores");
+				toolBar_modificacion.setVisible(false);
+				table_mostrar.setModel(reporteTableModel);
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel_mostrar);
+				panelPrincipal.repaint();
+				panelPrincipal.validate();
+			}
+		});
+		mnNewMenu_1.add(btn_rep_entrenadores);
+		
+		JButton btn_rep_competencias = new JButton("Competencias");
+		btn_rep_competencias.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					reporteTableModel = new TableModelReporte(ReporteCompetencias.obtenerCompetencias(),3);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				lbl_nombre_reporte.setVisible(true);
+				lbl_nombre_reporte.setText("Reporte Competencias");
+				toolBar_modificacion.setVisible(false);
+				table_mostrar.setModel(reporteTableModel);
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel_mostrar);
+				panelPrincipal.repaint();
+				panelPrincipal.validate();
+			}
+		});
+		mnNewMenu_1.add(btn_rep_competencias);
+		
+		JButton btn_rep_atletas_pais = new JButton("Atletas por pais");
+		btn_rep_atletas_pais.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					reporteTableModel = new TableModelReporte(ReporteAtletasPorPais.obtenerAtletasPorPais(),4);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				lbl_nombre_reporte.setVisible(true);
+				lbl_nombre_reporte.setText("Reporte Atleta Por País");
+				toolBar_modificacion.setVisible(false);
+				table_mostrar.setModel(reporteTableModel);
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel_mostrar);
+				panelPrincipal.repaint();
+				panelPrincipal.validate();
+			}
+		});
+		mnNewMenu_1.add(btn_rep_atletas_pais);
+		mnNewMenu_1.add(btn_rep_atletas_incompletos);
+		
+		JButton btn_rep_competencias_ciudad = new JButton("Competencias por ciudad");
+		btn_rep_competencias_ciudad.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					reporteTableModel = new TableModelReporte(ReporteCompetenciasPorCiudadYSede.obtenerCompetenciasPorCiudadYSede(),9);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				lbl_nombre_reporte.setVisible(true);
+				lbl_nombre_reporte.setText("Reporte Atleta Por Ciudad");
+				toolBar_modificacion.setVisible(false);
+				table_mostrar.setModel(reporteTableModel);
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel_mostrar);
+				panelPrincipal.repaint();
+				panelPrincipal.validate();
+			}
+		});
+		
+		JButton btn_rep_resultados_anuales = new JButton("Resultados Anuales");
+		btn_rep_resultados_anuales.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					reporteTableModel = new TableModelReporte(ReporteResultadosAnuales.obtenerResultadosAnuales(),6);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				lbl_nombre_reporte.setVisible(true);
+				lbl_nombre_reporte.setText("Reporte Resultados Anuales");
+				toolBar_modificacion.setVisible(false);
+				table_mostrar.setModel(reporteTableModel);
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel_mostrar);
+				panelPrincipal.repaint();
+				panelPrincipal.validate();
+			}
+		});
+		mnNewMenu_1.add(btn_rep_resultados_anuales);
+		
+		JButton btn_estado_competencias = new JButton("Estado competencias");
+		btn_estado_competencias.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					reporteTableModel = new TableModelReporte(ReporteEstadoCompetencias.obtenerEstadoCompetencias(),7);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				lbl_nombre_reporte.setVisible(true);
+				lbl_nombre_reporte.setText("Reporte Estado Competencias");
+				toolBar_modificacion.setVisible(false);
+				table_mostrar.setModel(reporteTableModel);
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel_mostrar);
+				panelPrincipal.repaint();
+				panelPrincipal.validate();
+			}
+		});
+		mnNewMenu_1.add(btn_estado_competencias);
+		
+		JButton btn_competencias_pais = new JButton("Competencias por pais");
+		btn_competencias_pais.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					reporteTableModel = new TableModelReporte(ReporteCompetenciasPorPais.obtenerCompetenciasPorPais(),8);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				lbl_nombre_reporte.setVisible(true);
+				lbl_nombre_reporte.setText("Reporte Competencias Por pais");
+				toolBar_modificacion.setVisible(false);
+				table_mostrar.setModel(reporteTableModel);
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel_mostrar);
+				panelPrincipal.repaint();
+				panelPrincipal.validate();
+			}
+		});
+		mnNewMenu_1.add(btn_competencias_pais);
+		mnNewMenu_1.add(btn_rep_competencias_ciudad);
+		
+		JButton btnSalir = new JButton("SALIR");
+		btnSalir.setFont(new Font("Tahoma", Font.BOLD, 11));
 		menuBar.add(btnSalir);
 		btnSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+			if(JOptionPane.showConfirmDialog(contentPane, "Desea salir?", "Atencion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE)==0){
 				dispose();
+			}	
 			}});
 		btnAadirAtleta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1724,18 +1990,17 @@ public class Principal extends JFrame {
 				panelPrincipal.revalidate();
 			}
 		});
-		
-		
 		configurarInterfazSegunRol();
 	
 	}
-	
 	private void configurarInterfazSegunRol() {
+	    // Usar el rol del usuario en lugar del parámetro esAdmin
+	    boolean esAdmin = "admin".equalsIgnoreCase(usuarioActual.getRol());
+	    
 	    if (!esAdmin) {
 	        ocultarOpcionesDeAdmin();
 	    }
 	}
-	 
 	private void ocultarOpcionesDeAdmin() {
 	    // Ocultar menú Añadir
 	    if (mnNewMenu != null) {

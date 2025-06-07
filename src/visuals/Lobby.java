@@ -9,6 +9,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import model.Usuario;
 import utils.Autenticador;
 
 import java.awt.Font;
@@ -187,38 +188,37 @@ public class Lobby extends JFrame {
         panel.add(panel_admin, "panel_admin");
     }
     
- // En el método configurarBotones() de Lobby.java
+ 
     private void configurarBotones() {
-        // Botón Aceptar en panel Usuario
+        Autenticador autenticador = new Autenticador();
         JButton btnUsuario = (JButton) ((JPanel) panel.getComponent(0)).getComponent(6);
         btnUsuario.addActionListener(e -> {
             String usuario = textField.getText();
             String contrasena = new String(passwordField.getPassword());
             
-            if(Autenticador.validarCredenciales(usuario, contrasena, false)) {
-                // Credenciales correctas de usuario
-                Principal principal = new Principal(false); // false para usuario normal
+            Usuario user = autenticador.autenticar(usuario, contrasena);
+            if(user != null) {
+                Principal principal = new Principal(autenticador.esAdmin(user), user);
                 principal.setVisible(true);
-                dispose(); // Cierra la ventana de login
+                dispose();
             } else {
-                textField_1.setText("Usuario o contraseña incorrectos");
+                textField_1.setText("Credenciales incorrectas o usuario inactivo");
                 textField_1.setVisible(true);
             }
         });
 
-        // Botón Aceptar en panel Admin
         JButton btnAdmin = (JButton) ((JPanel) panel.getComponent(1)).getComponent(6);
         btnAdmin.addActionListener(e -> {
             String usuario = textField_2.getText();
             String contrasena = new String(passwordField_1.getPassword());
             
-            if(Autenticador.validarCredenciales(usuario, contrasena, true)) {
-                // Credenciales correctas de admin
-                Principal principal = new Principal(true); // true para admin
+            Usuario user = autenticador.autenticar(usuario, contrasena);
+            if(user != null && autenticador.esAdmin(user)) {
+                Principal principal = new Principal(true, user);
                 principal.setVisible(true);
-                dispose(); // Cierra la ventana de login
+                dispose();
             } else {
-                textField_3.setText("Usuario o contraseña incorrectos");
+                textField_3.setText("Credenciales incorrectas o no tiene privilegios");
                 textField_3.setVisible(true);
             }
         });

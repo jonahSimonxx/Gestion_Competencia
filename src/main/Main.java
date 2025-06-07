@@ -15,8 +15,6 @@ public class Main {
 	 * @throws SQLException 
 	 */
 	public static void main(String[] args) throws SQLException {
-		DatabaseCleaner.limpiarDatos();
-		DatabaseInitializer.initializeBaseData();
 	           
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {

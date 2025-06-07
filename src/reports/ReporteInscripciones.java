@@ -1,10 +1,11 @@
 package reports;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReporteInscripciones {
-    public List<List<String>> obtenerInscripciones() throws SQLException {
+    public static ArrayList<ArrayList<String>> obtenerInscripciones() throws SQLException {
         return ReportGenerator.generarReporte("reporte_inscripciones");
     }
 }

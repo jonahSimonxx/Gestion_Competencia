@@ -4,13 +4,10 @@ import java.util.ArrayList;
 
 import javax.swing.table.DefaultTableModel;
 
-public class TableModelReporte extends DefaultTableModel{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+import model.Registro;
 
-	public TableModelReporte(ArrayList<ArrayList<String>> filas,int caso) {
+public class TableModelReportes extends DefaultTableModel{
+	public TableModelReportes (ArrayList<ArrayList<String>> filas,int caso) {
 	String identificadores[] = null;
 		switch(caso){
 	case 1:
